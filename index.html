@@ -28,6 +28,10 @@ button.o,.chip{background:var(--g2);color:var(--tx);border:1px solid var(--bl);b
 .mg.me{margin-left:auto;background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff}.mg.bot{background:rgba(0,200,255,.22)}.mg small{display:block;opacity:.7;font-size:11px}
 #auth{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}#auth .card{width:min(380px,100%)}
 #tt{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:30;display:none;padding:10px 16px;border-radius:16px;max-width:92vw;font-size:13px}
+.vid{width:100%;aspect-ratio:16/9;border-radius:18px;margin-top:8px;background:#000;border:0;display:block}
+nav button.plus{flex:0 0 54px;height:54px;margin:-16px 6px 0;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#00b8ff);color:#fff;justify-content:center;box-shadow:0 6px 20px rgba(108,71,255,.5)}
+#st>div{flex:none;width:68px}
+@media(min-width:900px){nav button.plus{flex:none;height:46px;width:46px;margin:6px auto}}
 </style></head><body>
 <div class="bg"><i></i><i></i><i></i></div><div id="tt" class="g"></div>
 <div id="auth"><div class="g card">
@@ -36,13 +40,14 @@ button.o,.chip{background:var(--g2);color:var(--tx);border:1px solid var(--bl);b
  <input id="nm" placeholder="আপনার নাম" style="display:none"><input id="em" type="email" placeholder="ইমেইল"><input id="pw" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬)">
  <div class="row"><button id="go">লগইন</button><button id="gg" class="o">Google দিয়ে</button></div><p id="er" class="meta" style="color:#e0245e"></p></div></div>
 <div id="shell" style="display:none">
- <header class="g"><h1>MomentX</h1><input id="hs" placeholder="মানুষ খুঁজুন…" style="margin:0;padding:8px 14px"><button class="gb" onclick="setKey()" title="Gemini key" id="kb"></button></header>
+ <header class="g"><h1>MomentX</h1><input id="hs" placeholder="মানুষ খুঁজুন…" style="margin:0;padding:8px 14px"><button class="gb" data-a="nav" data-v="notifs" id="bb" style="position:relative"></button><button class="gb" data-a="set" id="sb"></button></header>
  <main id="v"></main>
  <nav class="g" id="nav"></nav>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-storage-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-analytics-compat.js"></script>
 <script>
 let GKEY='';try{GKEY=localStorage.getItem('gk')||''}catch(e){}
@@ -53,14 +58,14 @@ firebase.initializeApp({apiKey:"AIzaSyC2EVos-h_RKxrDdopKDUjNG5AcePbxZz8",authDom
 try{firebase.analytics()}catch(e){}
 const auth=firebase.auth(),db=firebase.firestore(),FV=firebase.firestore.FieldValue,$=i=>document.getElementById(i),TS=()=>FV.serverTimestamp(),U=id=>db.collection('users').doc(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const P={home:"M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z",users:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5",msg:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",bell:"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0",user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",image:"M3 5h18v14H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M21 15l-5-5L5 19",heart:"M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8",share:"M4 12v8h16v-8M16 6l-4-4-4 4M12 2v13",send:"M22 2L11 13M22 2l-7 20-4-9-9-4z",trash:"M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",back:"M15 18l-6-6 6-6",spark:"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z",key:"M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3"};
+const P={home:"M3 11l9-8 9 8v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z",users:"M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8",book:"M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5",msg:"M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z",bell:"M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0",user:"M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",image:"M3 5h18v14H3zM8.5 10a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3M21 15l-5-5L5 19",heart:"M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8",share:"M4 12v8h16v-8M16 6l-4-4-4 4M12 2v13",send:"M22 2L11 13M22 2l-7 20-4-9-9-4z",trash:"M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",back:"M15 18l-6-6 6-6",spark:"M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z",key:"M21 2l-2 2m-7.6 7.6a5.5 5.5 0 1 1-7.8 7.8 5.5 5.5 0 0 1 7.8-7.8zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3",plus:"M12 5v14M5 12h14",play:"M5 3l14 9-14 9z",gear:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",video:"M23 7l-7 5 7 5zM1 5h15v14H1z"};
 const ic=n=>`<svg class="i" viewBox="0 0 24 24"><path d="${P[n]}"/></svg>`;
-$('kb').innerHTML=ic('key');
-const NAV=[['home','হোম','home'],['friends','বন্ধু','users'],['groups','গ্রুপ','book'],['msgs','মেসেজ','msg'],['notifs','নোটিফ.','bell'],['prof','প্রোফাইল','user']];
-$('nav').innerHTML=NAV.map(n=>`<button data-v="${n[0]}">${ic(n[2])}${n[1]}${n[0]=='notifs'?'<i class="bd" id="nb"></i>':''}</button>`).join('');
+$('bb').innerHTML=ic('bell')+'<i class="bd" id="nb"></i>';$('sb').innerHTML=ic('gear');
+const NAV=[['home','হোম','home'],['videos','ভিডিও','play'],['plus','','plus'],['msgs','ইনবক্স','msg'],['prof','প্রোফাইল','user']];
+$('nav').innerHTML=NAV.map(n=>`<button data-v="${n[0]}" class="${n[0]=='plus'?'plus':''}">${ic(n[2])}${n[1]}</button>`).join('');
 let me,UC={},uns=[],gun=[],rp,mode='in',pimg=null;
 const my=()=>UC[me.uid]||{};
-const nm=id=>UC[id]?.name||'ব্যবহারকারী',tm=t=>t?t.toDate().toLocaleString('bn-BD',{dateStyle:'medium',timeStyle:'short'}):'';
+const nm=id=>UC[id]?.name||'ব্যবহারকারী',tm=t=>t?t.toDate().toLocaleString(lang=='en'?'en-US':'bn-BD',{dateStyle:'medium',timeStyle:'short'}):'';
 const av=(id,c='')=>{const p=UC[id]?.photo;return p?`<img class="av ${c}" src="${p}">`:`<span class="av ${c}">${esc(nm(id)[0])}</span>`};
 const toast=m=>{const t=$('tt');t.textContent=m;t.style.display='block';setTimeout(()=>t.style.display='none',6000)};
 onunhandledrejection=e=>toast(e.reason?.message||String(e.reason));
@@ -81,20 +86,39 @@ auth.onAuthStateChanged(async u=>{me=u;kill();gun.forEach(f=>f());gun=[];$('auth
  gl(db.collection('users').limit(300),s=>{UC={};s.docs.forEach(d=>UC[d.id]=d.data());rp&&rp()});
  gl(db.collection('notifs').where('to','==',u.uid),s=>{const n=s.docs.filter(d=>!d.data().read).length;$('nb').textContent=n;$('nb').style.display=n?'block':'none'});
  show('home')});
-function show(v,a){kill();hl(v);({home,friends,groups,msgs,notifs,prof,grp})[v](a)}
-$('nav').onclick=e=>{const b=e.target.closest('button');b&&show(b.dataset.v)};
+function show(v,a){kill();hl(v);({home,videos,friends,groups,msgs,notifs,prof,grp})[v](a)}
+$('nav').onclick=e=>{const b=e.target.closest('button');b&&(b.dataset.v=='plus'?openCreate():show(b.dataset.v))};
 
 // ---- Posts ----
-const composer=()=>`<div class="g card"><div class="row">${av(me.uid)}<textarea id="pt" rows="2" class="sp" placeholder="কী ভাবছেন, ${esc(my().name||'')}?"></textarea></div><div id="pv"></div><div class="row" style="margin-top:8px"><button class="o" id="pi">${ic('image')} ছবি</button><button class="o" id="a1">${ic('spark')} AI</button><span class="sp"></span><button id="pb">পোস্ট</button></div></div>`;
-function bindC(gid){pimg=null;
+const composer=()=>`<div class="g card"><div class="row">${av(me.uid)}<textarea id="pt" rows="2" class="sp" placeholder="কী ভাবছেন, ${esc(my().name||'')}?"></textarea></div><div id="pv"></div><div class="row" style="margin-top:8px"><button class="o" id="pi">${ic('image')} ছবি</button><button class="o" id="pvd">${ic('play')} ভিডিও</button><button class="o" id="a1">${ic('spark')} AI</button><span class="sp"></span><button id="pb">পোস্ট</button></div></div>`;
+function bindC(gid){pimg=null;pvid=null;$('pvd').onclick=async()=>{const u=await pickVid();if(u){pvid=u;$('pv').innerHTML=`<video class="vid" src="${u}" controls></video>`}};
  $('pi').onclick=async()=>{pimg=await pickImg();$('pv').innerHTML=pimg?`<img class="pimg" src="${pimg}">`:''};
  $('a1').onclick=async e=>{const t=$('pt').value.trim();if(!t)return;const b=e.currentTarget;b.disabled=true;$('pt').value=await gem(t,'পোস্টটি একই ভাষায় আরও আকর্ষণীয় করে লেখো। শুধু নতুন টেক্সট দাও।');b.disabled=false};
- $('pb').onclick=async()=>{const t=$('pt').value.trim();if(!t&&!pimg)return;const d={uid:me.uid,text:t,img:pimg||'',likes:[],cc:0,at:TS()};if(gid)d.gid=gid;$('pt').value='';$('pv').innerHTML='';pimg=null;await db.collection('posts').add(d)}}
-const ph=d=>{const p=d.data(),l=p.likes||[],sh=p.sh;return`<div class="g card post" data-id="${d.id}" data-o="${p.uid}"><div class="row">${av(p.uid)}<div class="sp"><b class="lk" data-a="u" data-u="${p.uid}">${esc(nm(p.uid))}</b><div class="meta">${tm(p.at)}</div></div>${p.uid==me.uid?`<button class="gb" data-a="del">${ic('trash')}</button>`:''}</div>${p.text?`<div class="txt">${esc(p.text).replace(/#([\p{L}\p{N}_]+)/gu,'<span class="ht">#$1</span>')}</div>`:''}${sh?`<div class="g card"><b>${esc(sh.name)}</b><div class="txt">${esc(sh.text)}</div>${sh.img?`<img class="pimg" src="${sh.img}">`:''}</div>`:''}${p.img?`<img class="pimg" src="${p.img}">`:''}<div class="row" style="margin-top:6px"><button class="gb ${l.includes(me.uid)?'on':''}" data-a="like">${ic('heart')} ${l.length}</button><button class="gb" data-a="cm">${ic('msg')} ${p.cc||0}</button><button class="gb" data-a="share">${ic('share')}</button><button class="gb" data-a="ai">${ic('spark')}</button></div><div class="cs"></div></div>`};
+ $('pb').onclick=async()=>{const t=$('pt').value.trim();if(!t&&!pimg&&!pvid)return;const d={uid:me.uid,text:t,img:pimg||'',vid:pvid||'',likes:[],cc:0,views:0,at:TS()};if(gid)d.gid=gid;if(await submit(d)){$('pt').value='';$('pv').innerHTML='';pimg=pvid=null}}}
+const ph=d=>{const p=d.data(),l=p.likes||[],sh=p.sh;return`<div class="g card post" data-id="${d.id}" data-o="${p.uid}"><div class="row">${av(p.uid)}<div class="sp"><b class="lk" data-a="u" data-u="${p.uid}">${esc(nm(p.uid))}</b><div class="meta">${tm(p.at)}${p.views?' · '+p.views+' ভিউ':''}</div></div>${p.uid==me.uid?`<button class="gb" data-a="del">${ic('trash')}</button>`:(p.vid&&!(my().following||[]).includes(p.uid)?`<button data-a="fol" data-u="${p.uid}">সাবস্ক্রাইব</button>`:'')}</div>${p.text?`<div class="txt">${esc(p.text).replace(/#([\p{L}\p{N}_]+)/gu,'<span class="ht">#$1</span>')}</div>`:''}${sh?`<div class="g card"><b>${esc(sh.name)}</b><div class="txt">${esc(sh.text)}</div>${sh.img?`<img class="pimg" src="${sh.img}">`:''}</div>`:''}${p.img?`<img class="pimg" src="${p.img}">`:''}${p.vid?`<video class="vid" src="${p.vid}" controls preload="metadata"></video>`:''}${(m=>m?`<iframe class="vid" src="https://www.youtube.com/embed/${m[1]}" allowfullscreen></iframe>`:'')((p.text||'').match(/(?:youtu\.be\/|v=)([\w-]{11})/))}<div class="row" style="margin-top:6px"><button class="gb ${l.includes(me.uid)?'on':''}" data-a="like">${ic('heart')} ${l.length}</button><button class="gb" data-a="cm">${ic('msg')} ${p.cc||0}</button><button class="gb" data-a="share">${ic('share')}</button><button class="gb" data-a="ai">${ic('spark')}</button></div><div class="cs"></div></div>`};
 const sortD=l=>l.sort((a,b)=>(b.data().at?.seconds||9e9)-(a.data().at?.seconds||9e9));
 const feed=l=>$('feed').innerHTML=l.map(ph).join('')||'<p class="meta c">কোনো পোস্ট নেই</p>';
-function home(){$('v').innerHTML=composer()+'<div id="feed"></div>';bindC();let docs=[];
+function home(){$('v').innerHTML='<div id="st" class="row" style="flex-wrap:nowrap;overflow-x:auto;margin-bottom:12px"></div>'+composer()+'<div id="feed"></div>';bindC();let docs=[];
+ sn(db.collection('stories').orderBy('at','desc').limit(60),s=>{const by={};s.docs.forEach(d=>{const x=d.data();if(!x.at||Date.now()/1000-x.at.seconds<86400)(by[x.uid]=by[x.uid]||[]).push(x)});ST=by;if($('st'))$('st').innerHTML=`<div class="c lk" data-a="addst"><span class="av big" style="width:58px;height:58px">${ic('plus')}</span><div class="meta">আপনার স্টোরি</div></div>`+Object.keys(ST).map(u=>`<div class="c lk" data-a="vst" data-u="${u}"><span style="display:inline-block;padding:3px;border-radius:50%;background:linear-gradient(135deg,#ff5fa2,#7c5cff,#00c6ff)">${av(u)}</span><div class="meta">${esc(nm(u).split(' ')[0])}</div></div>`).join('')});
  sn(db.collection('posts').orderBy('at','desc').limit(80),s=>{docs=s.docs.filter(d=>!d.data().gid);feed(docs)})}
+
+// ---- Create / Settings / Stories / Videos / Limits / Language ----
+let pvid=null,ST={},lang='bn';try{lang=localStorage.getItem('lg')||'bn'}catch(e){}
+const day=()=>new Date().toISOString().slice(0,10),closeS=()=>$('sh')?.remove();
+function sheet(h){closeS();const o=document.createElement('div');o.id='sh';o.style.cssText='position:fixed;inset:0;z-index:40;background:#0005;display:flex;align-items:flex-end;justify-content:center;padding:12px';o.innerHTML=`<div class="g card" style="width:min(460px,100%);margin:0 0 76px;max-height:75vh;overflow:auto">${h}</div>`;o.onclick=e=>{if(e.target==o)o.remove()};document.body.appendChild(o)}
+const rowS=(a,v,l,i)=>`<div class="g card row lk" data-a="${a}" data-v="${v}">${ic(i)}<b>${l}</b></div>`;
+const openCreate=()=>sheet(`<h3 style="margin:0 0 10px">তৈরি করুন</h3>`+[['text','নতুন পোস্ট','msg'],['img','ছবি পোস্ট (দিনে ১টি)','image'],['vid','ভিডিও আপলোড (দিনে ১টি)','play'],['story','স্টোরি','plus']].map(x=>`<div class="g card row lk" data-a="cr" data-k="${x[0]}">${ic(x[2])}<b>${x[1]}</b></div>`).join(''));
+const openSet=()=>sheet(`<h3 style="margin:0 0 10px">সেটিংস</h3><div class="row" style="margin-bottom:10px"><span class="sp">ভাষা</span><button class="chip ${lang=='bn'?'a':''}" data-a="lang" data-l="bn">বাংলা</button><button class="chip ${lang=='en'?'a':''}" data-a="lang" data-l="en">English</button></div>`+rowS('nav','friends','মানুষ ও বন্ধু','users')+rowS('nav','groups','গ্রুপ ও স্টাডি রুম','book')+rowS('nav','notifs','নোটিফিকেশন','bell')+rowS('key','','Gemini AI key','key')+rowS('out','','লগআউট','back'));
+async function addSt(){const i=await pickImg(700);i&&db.collection('stories').add({uid:me.uid,img:i,at:TS()})}
+function viewSt(l){if(!l)return;let i=0;const o=document.createElement('div');o.style.cssText='position:fixed;inset:0;z-index:50;background:#000e;display:flex;align-items:center;justify-content:center';const d=()=>{if(i>=l.length)return o.remove();o.innerHTML=`<div style="position:absolute;top:16px;left:16px;color:#fff;display:flex;gap:8px;align-items:center">${av(l[i].uid)}<b>${esc(nm(l[i].uid))}</b></div><img src="${l[i].img}" style="max-width:100%;max-height:100%">`};o.onclick=()=>{i++;d()};d();document.body.appendChild(o)}
+function pickVid(){return new Promise(res=>{const i=document.createElement('input');i.type='file';i.accept='video/*';i.onchange=async()=>{const f=i.files[0];if(!f)return res(null);if(f.size>60e6){toast('ভিডিও ৬০MB এর বেশি হবে না');return res(null)}toast('আপলোড হচ্ছে…');try{const t=await firebase.storage().ref(`videos/${me.uid}/${Date.now()}_${f.name}`).put(f);res(await t.ref.getDownloadURL());toast('আপলোড সম্পূর্ণ')}catch(e){toast(e.message+' — Firebase Storage চালু আছে কিনা দেখুন');res(null)}};i.click()})}
+async function submit(d){const k=d.vid?'vid':d.img?'img':'';if(k){const s=await db.collection('posts').where('uid','==',me.uid).where('day','==',day()).get();if(s.docs.some(x=>x.data().kind==k)){toast(k=='vid'?'আজকের ভিডিও আপলোড শেষ — দিনে ১টি':'আজকের ছবি পোস্ট শেষ — দিনে ১টি');return false}}d.kind=k;d.day=day();await db.collection('posts').add(d);return true}
+document.addEventListener('play',e=>{const p=e.target.closest&&e.target.closest('.post');if(p&&!e.target._c){e.target._c=1;db.collection('posts').doc(p.dataset.id).update({views:FV.increment(1)}).catch(()=>{})}},true);
+function videos(){$('v').innerHTML='<div id="feed"></div>';let docs=[];const draw=()=>feed(docs.filter(d=>{const p=d.data();return p.vid||/(?:youtu\.be\/|v=)[\w-]{11}/.test(p.text||'')}));rp=draw;sn(db.collection('posts').orderBy('at','desc').limit(100),s=>{docs=s.docs;draw()})}
+const EN={'হোম':'Home','ভিডিও':'Video','ইনবক্স':'Inbox','প্রোফাইল':'Profile','লগইন':'Log in','সাইন আপ':'Sign up','আপনার নাম':'Your name','ইমেইল':'Email','পাসওয়ার্ড (কমপক্ষে ৬)':'Password (min 6)','Google দিয়ে':'With Google','অ্যাকাউন্ট খুলুন':'Create account','মানুষ খুঁজুন…':'Search people…','কী ভাবছেন':"What's on your mind",'ছবি':'Photo','পোস্ট':'Post','কোনো পোস্ট নেই':'No posts yet','আপনার স্টোরি':'Your story','বন্ধুর রিকুয়েস্ট':'Friend requests','আপনার বন্ধু':'Your friends','আপনি চিনতে পারেন':'People you may know','নাম দিয়ে খুঁজুন':'Search by name','কাউকে পাওয়া যায়নি':'No one found','গ্রহণ':'Accept','বাদ':'Decline','আনফ্রেন্ড':'Unfriend','ফলোইং':'Following','ফলো':'Follow','বন্ধু হোন':'Add friend','পাঠানো হয়েছে':'Request sent','সাবস্ক্রাইব':'Subscribe','অনুসারী':'followers','বন্ধু':'friends','কোনো বায়ো নেই':'No bio','বায়ো বদলান':'Edit bio','লগআউট':'Log out','ছবি বদলাতে ক্লিক করুন':'Tap to change photo','নতুন গ্রুপ / স্টাডি রুম':'New group / study room','গ্রুপের নাম':'Group name','তৈরি করুন':'Create','তৈরি':'Create','সাধারণ':'General','গণিত':'Math','বিজ্ঞান':'Science','ইংরেজি':'English','বাংলা':'Bangla','ইতিহাস':'History','সদস্য':'members','যোগ দিন':'Join','ছাড়ুন':'Leave','চ্যাট':'Chat','প্রথম গ্রুপটি আপনিই বানান':'Create the first group','মেসেজ লিখুন — AI এর জন্য @ai দিয়ে শুরু করুন':'Message — start with @ai to ask AI','আপনার প্রশ্ন লিখুন':'Type your question','কথা শুরু করুন':'Start chatting','ব্যাখ্যা':'Explain','কুইজ':'Quiz','অঙ্ক':'Solve','সারাংশ':'Summary','গ্রুপ তৈরি / খুঁজুন':'Create / find groups','পড়ার যেকোনো প্রশ্ন করুন':'Ask any study question','কোনো নোটিফিকেশন নেই':'No notifications','কমেন্ট লিখে Enter চাপুন':'Write a comment, press Enter','সেটিংস':'Settings','ভাষা':'Language','মানুষ ও বন্ধু':'People & friends','গ্রুপ ও স্টাডি রুম':'Groups & study rooms','নোটিফিকেশন':'Notifications','নতুন পোস্ট':'New post','ছবি পোস্ট (দিনে ১টি)':'Photo post (1/day)','ভিডিও আপলোড (দিনে ১টি)':'Upload video (1/day)','স্টোরি':'Story','ভিউ':'views','আজকের ভিডিও আপলোড শেষ — দিনে ১টি':'Daily video limit reached (1/day)','আজকের ছবি পোস্ট শেষ — দিনে ১টি':'Daily photo limit reached (1/day)','শেয়ার হয়েছে':'Shared','আপনার পোস্টে লাইক দিয়েছে':'liked your post','আপনার পোস্টে কমেন্ট করেছে':'commented on your post','আপনাকে ফলো করেছে':'followed you','আপনাকে বন্ধুর রিকুয়েস্ট পাঠিয়েছে':'sent you a friend request','আপনার রিকুয়েস্ট গ্রহণ করেছে':'accepted your friend request','আপনার পোস্ট শেয়ার করেছে':'shared your post','আপনাকে মেসেজ পাঠিয়েছে':'sent you a message','আপনাকে ভিডিও কলে ডাকছে':'is calling you on video','ভিডিও কল:':'Video call:','আপলোড হচ্ছে…':'Uploading…','আপলোড সম্পূর্ণ':'Upload complete'};
+const KS=Object.keys(EN).sort((a,b)=>b.length-a.length),trs=s=>{for(const k of KS)if(s.includes(k))s=s.split(k).join(EN[k]);return s};
+function tr(n){if(lang!='en')return;const w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT);let x;while(x=w.nextNode()){if(x.parentNode.closest('.txt,.mg,b.lk'))continue;const v=trs(x.nodeValue);if(v!=x.nodeValue)x.nodeValue=v}n.querySelectorAll&&n.querySelectorAll('[placeholder]').forEach(e=>{const v=trs(e.placeholder);if(v!=e.placeholder)e.placeholder=v})}
+if(lang=='en'){tr(document.body);new MutationObserver(l=>l.forEach(m=>m.addedNodes.forEach(n=>tr(n.nodeType==1?n:n.parentNode)))).observe(document.body,{childList:true,subtree:true})}
 
 // ---- Friends ----
 function rel(i){const x=UC[i]||{},fo=(my().following||[]).includes(i),fr=(my().friends||[]).includes(i);
@@ -126,14 +150,14 @@ function grp(id){$('v').innerHTML='<div id="gh"></div><div id="gc"></div><div id
 
 // ---- Messenger ----
 function chat(path,title,o={}){kill();
- $('v').innerHTML=`<div class="g card row"><button class="gb" data-a="back" data-b="${o.back}">${ic('back')}</button><b class="sp">${esc(title)}</b></div>${o.ai?`<div>${CH.map(c=>`<button class="chip" data-a="chip" data-t="${esc(c[1])}">${c[0]}</button>`).join('')}</div>`:''}<div id="ml" class="g card"></div><div class="g card row"><button class="gb" id="mp">${ic('image')}</button><input id="mi" class="sp" placeholder="${o.always?'আপনার প্রশ্ন লিখুন':'মেসেজ লিখুন — AI এর জন্য @ai দিয়ে শুরু করুন'}"><button id="ms">${ic('send')}</button></div>`;
+ $('v').innerHTML=`<div class="g card row"><button class="gb" data-a="back" data-b="${o.back}">${ic('back')}</button><b class="sp">${esc(title)}</b>${o.call?`<button class="gb" id="cl">${ic('video')}</button>`:''}</div>${o.ai?`<div>${CH.map(c=>`<button class="chip" data-a="chip" data-t="${esc(c[1])}">${c[0]}</button>`).join('')}</div>`:''}<div id="ml" class="g card"></div><div class="g card row"><button class="gb" id="mp">${ic('image')}</button><input id="mi" class="sp" placeholder="${o.always?'আপনার প্রশ্ন লিখুন':'মেসেজ লিখুন — AI এর জন্য @ai দিয়ে শুরু করুন'}"><button id="ms">${ic('send')}</button></div>`;
  let ms=[];const col=db.collection(path);
- sn(col.orderBy('at').limitToLast(80),s=>{ms=s.docs.map(d=>d.data());$('ml').innerHTML=ms.map(m=>`<div class="mg ${m.uid==me.uid?'me':''} ${m.uid=='ai'?'bot':''}"><small>${esc(m.uid=='ai'?'Gemini':nm(m.uid))}</small>${esc(m.text)}${m.img?`<img src="${m.img}">`:''}</div>`).join('')||'<p class="meta c">কথা শুরু করুন</p>';$('ml').scrollTop=1e9});
+ sn(col.orderBy('at').limitToLast(80),s=>{ms=s.docs.map(d=>d.data());$('ml').innerHTML=ms.map(m=>`<div class="mg ${m.uid==me.uid?'me':''} ${m.uid=='ai'?'bot':''}"><small>${esc(m.uid=='ai'?'Gemini':nm(m.uid))}</small>${esc(m.text).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target="_blank" style="color:inherit;text-decoration:underline">$1</a>')}${m.img?`<img src="${m.img}">`:''}</div>`).join('')||'<p class="meta c">কথা শুরু করুন</p>';$('ml').scrollTop=1e9});
  const send=async(img)=>{const t=$('mi').value.trim();if(!t&&!img)return;$('mi').value='';await col.add({uid:me.uid,text:t,img:img||'',at:TS()});
   if(o.to)nt(o.to,'msg','আপনাকে মেসেজ পাঠিয়েছে');
   if(o.ai&&t&&(o.always||/^@ai\b/i.test(t))){const ctx=ms.slice(-8).map(m=>nm(m.uid)+': '+m.text).join('\n'),a=await gem('আগের কথোপকথন:\n'+ctx+'\n\nপ্রশ্ন: '+t.replace(/^@ai\s*/i,''));await col.add({uid:'ai',text:a,at:TS()})}};
- $('ms').onclick=()=>send();$('mi').onkeydown=e=>e.key=='Enter'&&send();$('mp').onclick=async()=>{const i=await pickImg(700);i&&send(i)}}
-function msgs(){$('v').innerHTML=`<div class="g card row lk" data-a="tutor"><span class="av">AI</span><div class="sp"><b>Gemini টিউটর</b><div class="meta">পড়ার যেকোনো প্রশ্ন করুন</div></div></div><div id="ml2"></div>`;
+ $('ms').onclick=()=>send();if(o.call)$('cl').onclick=()=>{const u='https://meet.jit.si/MomentX'+o.call;window.open(u,'_blank');col.add({uid:me.uid,text:'ভিডিও কল: '+u,img:'',at:TS()});o.to&&nt(o.to,'call','আপনাকে ভিডিও কলে ডাকছে')};$('mi').onkeydown=e=>e.key=='Enter'&&send();$('mp').onclick=async()=>{const i=await pickImg(700);i&&send(i)}}
+function msgs(){$('v').innerHTML=`<div class="g card row lk" data-a="nav" data-v="groups">${ic('book')}<b class="sp">গ্রুপ তৈরি / খুঁজুন</b></div><div class="g card row lk" data-a="tutor"><span class="av">AI</span><div class="sp"><b>Gemini টিউটর</b><div class="meta">পড়ার যেকোনো প্রশ্ন করুন</div></div></div><div id="ml2"></div>`;
  let gs=[];const draw=()=>{$('ml2').innerHTML=(my().friends||[]).map(i=>`<div class="g card row lk" data-a="dm" data-u="${i}">${av(i)}<b class="sp">${esc(nm(i))}</b>${ic('msg')}</div>`).join('')+gs.map(d=>`<div class="g card row lk" data-a="gchat" data-id="${d.id}" data-n="${esc(d.data().name)}"><span class="av">${esc(d.data().name[0])}</span><b class="sp">${esc(d.data().name)}</b><span class="meta">গ্রুপ</span></div>`).join('')||'<p class="meta c">বন্ধু বানালে বা গ্রুপে যোগ দিলে এখানে চ্যাট দেখা যাবে</p>'};
  rp=draw;sn(db.collection('groups').where('members','array-contains',me.uid),s=>{gs=s.docs;draw()})}
 
@@ -143,17 +167,24 @@ function notifs(){$('v').innerHTML='<div id="nl"></div>';
   const un=s.docs.filter(d=>!d.data().read);if(un.length){const b=db.batch();un.forEach(d=>b.update(d.ref,{read:true}));b.commit()}})}
 
 // ---- Actions ----
-$('v').onclick=async e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,u=b.dataset.u,id=b.dataset.id,p=b.closest('.post'),ref=p&&db.collection('posts').doc(p.dataset.id),M=U(me.uid);
- if(a=='u'){view='prof';show('prof',u)}
+document.body.onclick=async e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,u=b.dataset.u,id=b.dataset.id,p=b.closest('.post'),ref=p&&db.collection('posts').doc(p.dataset.id),M=U(me.uid);
+ if(a=='set')openSet();
+ if(a=='nav'){closeS();show(b.dataset.v)}
+ if(a=='lang'){try{localStorage.setItem('lg',b.dataset.l)}catch(e){}location.reload()}
+ if(a=='key')setKey();
+ if(a=='cr'){const k=b.dataset.k;closeS();if(k=='story')return addSt();show('home');if(k=='img')$('pi').click();if(k=='vid')$('pvd').click();if(k=='text')$('pt').focus()}
+ if(a=='addst')addSt();
+ if(a=='vst')viewSt(ST[u]);
+ if(a=='u'){closeS();view='prof';show('prof',u)}
  if(a=='fol'){M.update({following:FV.arrayUnion(u)});nt(u,'fol','আপনাকে ফলো করেছে')}
  if(a=='unf')M.update({following:FV.arrayRemove(u)});
  if(a=='req'){U(u).update({reqs:FV.arrayUnion(me.uid)});nt(u,'req','আপনাকে বন্ধুর রিকুয়েস্ট পাঠিয়েছে')}
  if(a=='acc'){M.update({friends:FV.arrayUnion(u),reqs:FV.arrayRemove(u)});U(u).update({friends:FV.arrayUnion(me.uid)});nt(u,'acc','আপনার রিকুয়েস্ট গ্রহণ করেছে')}
  if(a=='dec')M.update({reqs:FV.arrayRemove(u)});
  if(a=='unfr'&&confirm('আনফ্রেন্ড করবেন?')){M.update({friends:FV.arrayRemove(u)});U(u).update({friends:FV.arrayRemove(me.uid)})}
- if(a=='dm'){hl('msgs');chat(`dm/${[me.uid,u].sort().join('_')}/msgs`,nm(u),{ai:1,back:'msgs',to:u})}
+ if(a=='dm'){hl('msgs');chat(`dm/${[me.uid,u].sort().join('_')}/msgs`,nm(u),{ai:1,back:'msgs',to:u,call:'dm'+[me.uid,u].sort().join('_')})}
  if(a=='tutor')chat(`users/${me.uid}/ai`,'Gemini টিউটর',{ai:1,always:1,back:'msgs'});
- if(a=='gchat'){chat(`groups/${id}/msgs`,b.dataset.n,{ai:1,back:'grp:'+id})}
+ if(a=='gchat'){chat(`groups/${id}/msgs`,b.dataset.n,{ai:1,back:'msgs',call:'g'+id})}
  if(a=='grp'&&!e.target.closest('button'))show('grp',id);
  if(a=='join'){await db.collection('groups').doc(id).update({members:FV.arrayUnion(me.uid)})}
  if(a=='leave')db.collection('groups').doc(id).update({members:FV.arrayRemove(me.uid)});
@@ -161,7 +192,7 @@ $('v').onclick=async e=>{const b=e.target.closest('[data-a]');if(!b)return;const
  if(a=='chip'){$('mi').value=b.dataset.t;$('mi').focus()}
  if(a=='ph'){const i=await pickImg(220);i&&M.update({photo:i})}
  if(a=='bio'){const t=prompt('আপনার বায়ো লিখুন',my().bio||'');t!==null&&M.update({bio:t})}
- if(a=='out')auth.signOut();
+ if(a=='out'){closeS();auth.signOut()}
  if(a=='like'){const on=b.classList.contains('on');ref.update({likes:on?FV.arrayRemove(me.uid):FV.arrayUnion(me.uid)});on||nt(p.dataset.o,'like','আপনার পোস্টে লাইক দিয়েছে')}
  if(a=='del'&&confirm('মুছে ফেলবেন?'))ref.delete();
  if(a=='share'){const s=(await ref.get()).data();await db.collection('posts').add({uid:me.uid,text:'',img:'',likes:[],cc:0,sh:{name:nm(s.uid),text:s.text||'',img:s.img||''},at:TS()});toast('আপনার প্রোফাইলে শেয়ার হয়েছে');nt(s.uid,'share','আপনার পোস্ট শেয়ার করেছে')}
