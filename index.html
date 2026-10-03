@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MomentX</title>
+<style>
+:root{--tx:#101828;--mut:#5b6575;--pri:#6c47ff;--g1:rgba(255,255,255,.55);--g2:rgba(255,255,255,.18);--bl:rgba(255,255,255,.6);--bg1:#cfd9ff;--bg2:#ffd9ec}
+@media(prefers-color-scheme:dark){:root{--tx:#eef1f6;--mut:#a3adbd;--g1:rgba(255,255,255,.16);--g2:rgba(255,255,255,.04);--bl:rgba(255,255,255,.22);--bg1:#0b1026;--bg2:#1b0f2e}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--tx);font-family:system-ui,"Noto Sans Bengali",sans-serif;background:linear-gradient(135deg,var(--bg1),var(--bg2)) fixed}
+.bg{position:fixed;inset:0;overflow:hidden;z-index:-1}.bg i{position:absolute;width:44vmax;height:44vmax;border-radius:50%;filter:blur(70px);opacity:.55;animation:fl 18s ease-in-out infinite alternate}
+.bg i:nth-child(1){background:#7c5cff;left:-10vmax;top:-8vmax}.bg i:nth-child(2){background:#00d4ff;right:-12vmax;top:20vh;animation-delay:-6s}.bg i:nth-child(3){background:#ff5fa2;left:15vw;bottom:-18vmax;animation-delay:-12s}
+@keyframes fl{to{transform:translate(6vw,5vh) scale(1.15)}}
+.g{background:linear-gradient(135deg,var(--g1),var(--g2));backdrop-filter:blur(22px) saturate(180%);-webkit-backdrop-filter:blur(22px) saturate(180%);border:1px solid var(--bl);box-shadow:0 8px 32px rgba(40,30,120,.15),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(255,255,255,.08)}
+.card{border-radius:24px;padding:14px;margin-bottom:12px}
+header{position:sticky;top:8px;z-index:5;margin:8px auto;max-width:640px;border-radius:999px;padding:10px 18px;display:flex;justify-content:space-between;align-items:center}
+h1{margin:0;font-size:20px;background:linear-gradient(90deg,#7c5cff,#00b8ff);-webkit-background-clip:text;color:transparent}
+main{max-width:640px;margin:12px auto;padding:0 10px 110px}
+nav{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:8;display:flex;gap:2px;padding:6px;border-radius:999px;width:min(420px,94vw)}
+nav button{flex:1;background:none;color:var(--mut);box-shadow:none;padding:8px 2px;font-size:12px;line-height:1.3}nav button.a{background:var(--g1);color:var(--pri);box-shadow:inset 0 1px 0 var(--bl)}nav span{display:block;font-size:19px}
+input,textarea,select{width:100%;padding:11px 14px;border:1px solid var(--bl);border-radius:16px;background:rgba(255,255,255,.22);color:var(--tx);font:inherit;margin-bottom:8px;outline:none}
+select{width:auto}input::placeholder,textarea::placeholder{color:var(--mut)}
+button{background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff;border:0;border-radius:999px;padding:9px 16px;font:inherit;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+button.o,.chip{background:var(--g2);color:var(--tx);border:1px solid var(--bl);box-shadow:none}.chip{padding:5px 12px;font-size:13px;margin:0 4px 8px 0}.chip.a{background:var(--pri);color:#fff}
+.gb{background:none;color:var(--mut);box-shadow:none;padding:6px 10px}.gb.on{color:#ff2d6f}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sp{flex:1}.meta{color:var(--mut);font-size:12px}.c{text-align:center}.lk{cursor:pointer}.ht{color:var(--pri)}
+.txt{white-space:pre-wrap;margin:10px 0;line-height:1.55}.row input{margin:0}
+.av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7c5cff,#00c6ff);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:none}.av.big{width:84px;height:84px;font-size:34px}
+#ml{height:50vh;overflow:auto}.mg{max-width:82%;padding:8px 13px;border-radius:18px;margin:6px 0;background:var(--g1);white-space:pre-wrap;line-height:1.5}
+.mg.me{margin-left:auto;background:linear-gradient(135deg,#7c5cff,#5b8cff);color:#fff}.mg.bot{background:rgba(0,200,255,.22)}.mg small{display:block;opacity:.7;font-size:11px}
+#auth{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}#auth .card{width:min(380px,100%)}
+</style></head><body>
+<div class="bg"><i></i><i></i><i></i></div>
+<div id="auth"><div class="g card">
+ <h1 style="font-size:26px;text-align:center">✨ MomentX</h1>
+ <div class="row" style="justify-content:center;margin:8px 0"><button class="chip a" id="t1">লগইন</button><button class="chip" id="t2">সাইন আপ</button></div>
+ <input id="nm" placeholder="আপনার নাম" style="display:none"><input id="em" type="email" placeholder="ইমেইল"><input id="pw" type="password" placeholder="পাসওয়ার্ড (কমপক্ষে ৬)">
+ <div class="row"><button id="go">লগইন</button><button id="gg" class="o">Google দিয়ে</button></div><p id="er" class="meta" style="color:#e0245e"></p></div></div>
+<div id="shell" style="display:none">
+ <header class="g"><h1>✨ MomentX</h1><span><span id="hu" class="meta"></span> <button class="gb" onclick="setKey()" title="Gemini key">🔑</button></span></header>
+ <main id="v"></main>
+ <nav class="g" id="nav"><button data-v="home"><span>🏠</span>হোম</button><button data-v="people"><span>👥</span>মানুষ</button><button data-v="chats"><span>💬</span>চ্যাট</button><button data-v="study"><span>📚</span>স্টাডি</button><button data-v="prof"><span>👤</span>প্রোফাইল</button></nav>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/firebase-analytics-compat.js"></script>
+<script>
+let GKEY='';try{GKEY=localStorage.getItem('gk')||''}catch(e){}
+function setKey(){const k=prompt('আপনার Gemini API key দিন (AIza... দিয়ে শুরু):',GKEY);if(k===null)return false;GKEY=k.trim();try{localStorage.setItem('gk',GKEY)}catch(e){}return !!GKEY}
+const SYS="তুমি স্কুল শিক্ষার্থীদের বন্ধুসুলভ শিক্ষক। সহজ বাংলায়, ছোট ধাপে ও উদাহরণসহ উত্তর দাও। নিশ্চিত না হলে সেটা বলো।";
+const CH=[['📖 ব্যাখ্যা','@ai সহজ করে ব্যাখ্যা করো: '],['📝 কুইজ','@ai ৫টি MCQ কুইজ বানাও (উত্তরসহ): '],['∑ অঙ্ক','@ai ধাপে ধাপে সমাধান করো: '],['⚡ সারাংশ','@ai সংক্ষেপে সারাংশ দাও: ']];
+firebase.initializeApp({apiKey:"AIzaSyC2EVos-h_RKxrDdopKDUjNG5AcePbxZz8",authDomain:"momentx-73e28.firebaseapp.com",projectId:"momentx-73e28",storageBucket:"momentx-73e28.firebasestorage.app",messagingSenderId:"55000125185",appId:"1:55000125185:web:ae133ee718a6bed7a25500",measurementId:"G-BZXMKLRNX8"});
+try{firebase.analytics()}catch(e){}
+const auth=firebase.auth(),db=firebase.firestore(),F=firebase.firestore.FieldValue,$=i=>document.getElementById(i);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let me,my={},uns=[],myU,rp,flt='all',mode='in';
+const U=id=>db.collection('users').doc(id),TS=()=>F.serverTimestamp();
+const kill=()=>{uns.forEach(f=>f());uns=[];rp=null};
+const av=(n,c='')=>`<span class="av ${c}">${esc((n||'?')[0])}</span>`;
+const hl=v=>document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('a',b.dataset.v==v));
+async function gem(q,sys=SYS){if(!GKEY&&!setKey())return'AI ব্যবহার করতে Gemini key দরকার (উপরে 🔑 চাপুন)';try{const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GKEY}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({systemInstruction:{parts:[{text:sys}]},contents:[{role:'user',parts:[{text:q}]}]})});const d=await r.json();if(d.error&&/API key|API_KEY/i.test(d.error.message)){GKEY='';try{localStorage.removeItem('gk')}catch(e){}return'key সঠিক নয়, আবার চেষ্টা করুন'}return(d.candidates?.[0]?.content?.parts?.[0]?.text||d.error?.message||'উত্তর পাওয়া যায়নি').trim()}catch(e){return'নেটওয়ার্ক ত্রুটি'}}
+
+// ---------- Auth ----------
+function setMode(m){mode=m;$('t1').className='chip'+(m=='in'?' a':'');$('t2').className='chip'+(m=='up'?' a':'');$('nm').style.display=m=='up'?'block':'none';$('go').textContent=m=='in'?'লগইন':'অ্যাকাউন্ট খুলুন'}
+$('t1').onclick=()=>setMode('in');$('t2').onclick=()=>setMode('up');
+$('go').onclick=async()=>{try{const e=$('em').value,p=$('pw').value;if(mode=='in')await auth.signInWithEmailAndPassword(e,p);else{const n=$('nm').value||e.split('@')[0],c=await auth.createUserWithEmailAndPassword(e,p);await c.user.updateProfile({displayName:n});await U(c.user.uid).set({name:n,bio:'',following:[],friends:[],reqs:[],at:TS()},{merge:true})}}catch(x){$('er').textContent=x.message}};
+$('gg').onclick=()=>auth.signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(x=>$('er').textContent=x.message);
+auth.onAuthStateChanged(async u=>{me=u;kill();myU&&myU();$('auth').style.display=u?'none':'flex';$('shell').style.display=u?'block':'none';if(!u)return;
+ const r=U(u.uid);if(!(await r.get()).exists)await r.set({name:u.displayName||u.email.split('@')[0],bio:'',following:[],friends:[],reqs:[],at:TS()},{merge:true});
+ myU=r.onSnapshot(s=>{my=s.data()||{};$('hu').textContent=my.name||'';rp&&rp()});show('home')});
+
+// ---------- Router ----------
+function show(v,a){kill();hl(v);({home,people,chats,study,prof})[v](a)}
+$('nav').onclick=e=>{const b=e.target.closest('button');b&&show(b.dataset.v)};
+
+// ---------- Home ----------
+const ph=d=>{const p=d.data(),l=p.likes||[];return`<div class="g card post" data-id="${d.id}"><div class="row">${av(p.name)}<div><b class="lk" data-a="u" data-u="${p.uid}">${esc(p.name)}</b><div class="meta">${p.at?p.at.toDate().toLocaleString('bn-BD'):''}</div></div></div><div class="txt">${esc(p.text).replace(/#([\p{L}\p{N}_]+)/gu,'<span class="ht">#$1</span>')}</div><div class="row"><button class="gb ${l.includes(me.uid)?'on':''}" data-a="like">♥ ${l.length}</button><button class="gb" data-a="cm">💬 ${p.cc||0}</button><button class="gb" data-a="ai">🤖 সারাংশ</button><span class="sp"></span>${p.uid==me.uid?'<button class="gb" data-a="del">🗑</button>':''}</div><div class="cs"></div></div>`};
+function home(){
+ $('v').innerHTML=`<div class="g card"><textarea id="pt" rows="3" placeholder="কী ভাবছেন, ${esc(my.name||'')}?"></textarea><div class="row"><button class="o" id="a1">✨ উন্নত করো</button><button class="o" id="a2">#</button><span class="sp"></span><button id="pb">পোস্ট</button></div></div>
+ <div id="fl"><button class="chip ${flt=='all'?'a':''}" data-a="flt" data-f="all">সবাই</button><button class="chip ${flt=='fol'?'a':''}" data-a="flt" data-f="fol">ফলোইং</button></div><div id="feed"></div>`;
+ let docs=[];const draw=()=>{const l=docs.filter(d=>flt=='all'||d.data().uid==me.uid||(my.following||[]).includes(d.data().uid));$('feed').innerHTML=l.map(ph).join('')||'<p class="meta c">কোনো পোস্ট নেই</p>'};
+ rp=draw;uns.push(db.collection('posts').orderBy('at','desc').limit(60).onSnapshot(s=>{docs=s.docs;draw()}));
+ $('pb').onclick=async()=>{const t=$('pt').value.trim();if(!t)return;$('pt').value='';await db.collection('posts').add({uid:me.uid,name:my.name,text:t,likes:[],cc:0,at:TS()})};
+ const ai=(id,p,ap)=>$(id).onclick=async e=>{const t=$('pt').value.trim();if(!t)return;const b=e.target,o=b.textContent;b.textContent='…';const r=await gem(t,p);$('pt').value=ap?t+'\n'+r:r;b.textContent=o};
+ ai('a1','পোস্টটি একই ভাষায় আরও আকর্ষণীয় ও পরিষ্কার করে লেখো। শুধু নতুন টেক্সট দাও।');ai('a2','এই পোস্টের জন্য ৫টি প্রাসঙ্গিক হ্যাশট্যাগ দাও, শুধু হ্যাশট্যাগ, এক লাইনে।',1);
+}
+
+// ---------- People ----------
+function rel(id,x){const fo=(my.following||[]).includes(id),fr=(my.friends||[]).includes(id);
+ return`<button class="${fo?'o':''}" data-a="${fo?'unf':'fol'}" data-u="${id}">${fo?'ফলোইং ✓':'ফলো'}</button>`+(fr?`<button class="o" data-a="dm" data-u="${id}">💬</button>`:(my.reqs||[]).includes(id)?`<button data-a="acc" data-u="${id}">গ্রহণ</button>`:(x.reqs||[]).includes(me.uid)?'<span class="meta">পাঠানো হয়েছে</span>':`<button class="o" data-a="req" data-u="${id}">+ বন্ধু</button>`)}
+function people(){
+ $('v').innerHTML='<input id="sq" class="g" placeholder="🔍 মানুষ খুঁজুন"><div id="pl"></div>';let us=[];
+ const draw=()=>{const q=$('sq').value.toLowerCase();$('pl').innerHTML=us.filter(d=>d.id!=me.uid&&(d.data().name||'').toLowerCase().includes(q)).map(d=>`<div class="g card row">${av(d.data().name)}<b class="lk sp" data-a="u" data-u="${d.id}">${esc(d.data().name)}</b>${rel(d.id,d.data())}</div>`).join('')||'<p class="meta c">কাউকে পাওয়া যায়নি</p>'};
+ $('sq').oninput=draw;rp=draw;uns.push(db.collection('users').limit(100).onSnapshot(s=>{us=s.docs;draw()}));
+}
+
+// ---------- Profile ----------
+async function prof(id){id=id||me.uid;const x=(await U(id).get()).data()||{},fc=(await db.collection('users').where('following','array-contains',id).get()).size;
+ $('v').innerHTML=`<div class="g card c">${av(x.name,'big')}<h2 style="margin:8px 0 2px">${esc(x.name)}</h2><p class="meta">${esc(x.bio||'কোনো বায়ো নেই')}</p><div class="row" style="justify-content:center"><span><b>${fc}</b> অনুসারী</span><span><b>${(x.following||[]).length}</b> ফলোইং</span><span><b>${(x.friends||[]).length}</b> বন্ধু</span></div><div class="row" style="justify-content:center;margin-top:12px">${id==me.uid?'<button class="o" data-a="bio">✏️ বায়ো</button><button class="o" data-a="out">লগআউট</button>':rel(id,x)}</div></div><div id="feed"></div>`;
+ uns.push(db.collection('posts').where('uid','==',id).onSnapshot(s=>{$('feed').innerHTML=s.docs.sort((a,b)=>(b.data().at?.seconds||9e9)-(a.data().at?.seconds||9e9)).map(ph).join('')||'<p class="meta c">কোনো পোস্ট নেই</p>'}));
+ rp=()=>show('prof',id);
+}
+
+// ---------- Chat (DM / Room / AI tutor) ----------
+function chat(path,title,o={}){kill();
+ $('v').innerHTML=`<div class="g card row"><button class="gb" data-a="back" data-b="${o.back}">←</button><b class="sp">${esc(title)}</b></div>${o.ai?`<div>${CH.map(c=>`<button class="chip" data-a="chip" data-t="${esc(c[1])}">${c[0]}</button>`).join('')}</div>`:''}<div id="ml" class="g card"></div><div class="g card row"><input id="mi" class="sp" placeholder="${o.ai&&!o.always?'মেসেজ লিখুন — AI এর জন্য @ai দিয়ে শুরু করুন':'আপনার প্রশ্ন বা মেসেজ লিখুন'}"><button id="ms">➤</button></div>`;
+ let ms=[];const col=db.collection(path);
+ uns.push(col.orderBy('at').limitToLast(80).onSnapshot(s=>{ms=s.docs.map(d=>d.data());$('ml').innerHTML=ms.map(m=>`<div class="mg ${m.uid==me.uid?'me':''} ${m.uid=='ai'?'bot':''}"><small>${esc(m.name)}</small>${esc(m.text)}</div>`).join('')||'<p class="meta c">কথা শুরু করুন 👋</p>';$('ml').scrollTop=1e9}));
+ const send=async()=>{const t=$('mi').value.trim();if(!t)return;$('mi').value='';await col.add({uid:me.uid,name:my.name,text:t,at:TS()});
+  if(o.ai&&(o.always||/^@ai\b/i.test(t))){const ctx=ms.slice(-8).map(m=>m.name+': '+m.text).join('\n'),a=await gem('আগের কথোপকথন:\n'+ctx+'\n\nপ্রশ্ন: '+t.replace(/^@ai\s*/i,''));await col.add({uid:'ai',name:'🤖 Gemini',text:a,at:TS()})}};
+ $('ms').onclick=send;$('mi').onkeydown=e=>e.key=='Enter'&&send();
+}
+async function chats(){const fs=await Promise.all((my.friends||[]).map(i=>U(i).get()));
+ $('v').innerHTML=`<div class="g card row lk" data-a="tutor"><span class="av">🤖</span><div class="sp"><b>Gemini টিউটর</b><div class="meta">পড়ার যেকোনো প্রশ্ন করুন</div></div></div>`+fs.map(s=>`<div class="g card row lk" data-a="dm" data-u="${s.id}">${av(s.data().name)}<b class="sp">${esc(s.data().name)}</b>💬</div>`).join('')+(fs.length?'':'<p class="meta c">"মানুষ" ট্যাবে বন্ধু যোগ করলে এখানে চ্যাট করতে পারবেন</p>')}
+
+// ---------- Study rooms ----------
+function study(){
+ $('v').innerHTML=`<div class="g card"><b>📚 নতুন স্টাডি রুম</b><div class="row" style="margin-top:8px"><input id="rn" class="sp" placeholder="রুমের নাম (যেমন: নবম শ্রেণি গণিত)"><select id="rs">${['গণিত','বিজ্ঞান','ইংরেজি','বাংলা','ইতিহাস','ICT','অন্যান্য'].map(s=>`<option>${s}</option>`).join('')}</select><button id="rc">তৈরি</button></div></div><div id="rl"></div>`;
+ $('rc').onclick=async()=>{const n=$('rn').value.trim();if(!n)return;$('rn').value='';await db.collection('rooms').add({name:n,subj:$('rs').value,owner:me.uid,ownerName:my.name,at:TS()})};
+ uns.push(db.collection('rooms').orderBy('at','desc').limit(40).onSnapshot(s=>{$('rl').innerHTML=s.docs.map(d=>{const r=d.data();return`<div class="g card row lk" data-a="room" data-id="${d.id}" data-n="${esc(r.name)}"><span class="av">📖</span><div class="sp"><b>${esc(r.name)}</b><div class="meta">${esc(r.subj)} · ${esc(r.ownerName)}</div></div>→</div>`}).join('')||'<p class="meta c">প্রথম রুমটি আপনিই বানান</p>'}));
+}
+
+// ---------- Actions ----------
+$('v').onclick=async e=>{const b=e.target.closest('[data-a]');if(!b)return;const a=b.dataset.a,u=b.dataset.u,p=b.closest('.post'),ref=p&&db.collection('posts').doc(p.dataset.id);
+ if(a=='u')show('prof',u);
+ if(a=='fol')U(me.uid).update({following:F.arrayUnion(u)});
+ if(a=='unf')U(me.uid).update({following:F.arrayRemove(u)});
+ if(a=='req')U(u).update({reqs:F.arrayUnion(me.uid)});
+ if(a=='acc'){U(me.uid).update({friends:F.arrayUnion(u),reqs:F.arrayRemove(u)});U(u).update({friends:F.arrayUnion(me.uid)})}
+ if(a=='dm'){hl('chats');const s=await U(u).get();chat(`dm/${[me.uid,u].sort().join('_')}/msgs`,s.data().name,{ai:1,back:'chats'})}
+ if(a=='tutor'){chat(`users/${me.uid}/ai`,'🤖 Gemini টিউটর',{ai:1,always:1,back:'chats'})}
+ if(a=='room'){chat(`rooms/${b.dataset.id}/msgs`,b.dataset.n,{ai:1,back:'study'})}
+ if(a=='back')show(b.dataset.b);
+ if(a=='chip'){$('mi').value=b.dataset.t;$('mi').focus()}
+ if(a=='flt'){flt=b.dataset.f;home()}
+ if(a=='bio'){const t=prompt('আপনার বায়ো লিখুন',my.bio||'');t!==null&&U(me.uid).update({bio:t})}
+ if(a=='out')auth.signOut();
+ if(a=='like'){const on=b.classList.contains('on');ref.update({likes:on?F.arrayRemove(me.uid):F.arrayUnion(me.uid)})}
+ if(a=='del'&&confirm('মুছে ফেলবেন?'))ref.delete();
+ if(a=='ai'){const o=b.textContent;b.textContent='…';alert(await gem('এই পোস্টটি এক-দুই লাইনে বাংলায় সারাংশ করো:\n'+p.querySelector('.txt').textContent));b.textContent=o}
+ if(a=='cm'){const bx=p.querySelector('.cs');if(bx.innerHTML){bx.innerHTML='';bx._u&&bx._u();return}
+  bx.innerHTML='<div class="l"></div><input placeholder="কমেন্ট লিখে Enter চাপুন" style="margin-top:8px">';
+  bx._u=ref.collection('comments').orderBy('at').onSnapshot(s=>{bx.querySelector('.l').innerHTML=s.docs.map(d=>`<div class="meta" style="margin:4px 0"><b>${esc(d.data().name)}</b>: <span style="color:var(--tx)">${esc(d.data().text)}</span></div>`).join('')});uns.push(bx._u);
+  bx.querySelector('input').onkeydown=async k=>{if(k.key!='Enter'||!k.target.value.trim())return;const t=k.target.value.trim();k.target.value='';await ref.collection('comments').add({uid:me.uid,name:my.name,text:t,at:TS()});ref.update({cc:F.increment(1)})}}
+};
+</script></body></html>
